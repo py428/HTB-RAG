@@ -1,6 +1,6 @@
 import os
 import json
-import urllib.request
+import requests
 from dotenv import load_dotenv
 load_dotenv()
 from fastapi import FastAPI
@@ -24,11 +24,11 @@ def get_hf_embedding(text: str, hf_token: str):
         "Authorization": f"Bearer {hf_token}",
         "Content-Type": "application/json"
     }
-    data = json.dumps({"inputs": text}).encode("utf-8")
-    req = urllib.request.Request(url, data=data, headers=headers)
-    with urllib.request.urlopen(req, timeout=10) as response:
-        result = json.loads(response.read().decode())
-        return result[0] if isinstance(result[0], list) else result
+    data = {"inputs": text}
+    response = requests.post(url, headers=headers, json=data, timeout=10)
+    response.raise_for_status()
+    result = response.json()
+    return result[0] if isinstance(result[0], list) else result
 
 @app.post("/api/chat")
 def chat(request: QueryRequest):
