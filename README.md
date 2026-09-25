@@ -32,7 +32,7 @@ To make evaluation as frictionless as possible, the Supabase database is **alrea
 Clone the repository and install the dependencies:
 ```bash
 git clone https://github.com/py428/HTB-RAG.git
-cd htb-wiki
+cd HTB-RAG
 python -m venv venv
 venv\Scripts\activate      # On Windows
 # source venv/bin/activate # On Linux/Mac
@@ -58,6 +58,11 @@ You can now ask the RAG pipeline a question. It will reach out to the cloud data
 ```bash
 python query.py "Which machine has no modifiable services identified by winPEAS?"
 ```
+
+### Optional: Re-indexing the Corpus from Scratch
+While having a pre-populated database is ideal for fast grading, this repository contains fully functional ingestion code. If you want to re-populate the database yourself from scratch:
+1. Run `schema.sql` inside the Supabase SQL Editor to reset the tables.
+2. Execute `python ingest.py` to re-chunk and embed the raw markdown files locally.
 
 ---
 
