@@ -26,8 +26,6 @@ If you do not want to run the code locally, you can evaluate the RAG pipeline di
 
 ## 💻 How to Run Locally (Reviewer Guide)
 
-To make evaluation as frictionless as possible, the Supabase database is **already fully populated** with the vectorized document chunks. You do not need to run the ingestion script, wait for embeddings to process, or set up your own database.
-
 ### Step 1: Clone & Setup
 Clone the repository and install the dependencies:
 ```bash
@@ -53,17 +51,16 @@ The deployed API uses Hugging Face's current Inference Providers router for
 temporarily unavailable, the API falls back to keyword retrieval from the same
 Supabase document collection instead of returning a provider error to the user.
 
-### Step 3: Run a Query
-You can now ask the RAG pipeline a question. It will reach out to the cloud database, retrieve the top 10 most relevant context chunks, and synthesize a clean markdown answer with citations.
-```bash
-python query.py "Which machine has no modifiable services identified by winPEAS?"
-```
-
-### Optional: Re-indexing the Corpus from Scratch
+### Step 3: Re-indexing the Corpus from Scratch
 While having a pre-populated database is ideal for fast grading, this repository contains fully functional ingestion code. If you want to re-populate the database yourself from scratch:
 1. Run `schema.sql` inside the Supabase SQL Editor to reset the tables.
 2. Execute `python ingest.py` to re-chunk and embed the raw markdown files locally.
 
+### Step 4: Run a Query
+You can now ask the RAG pipeline a question. It will reach out to the cloud database, retrieve the top 10 most relevant context chunks, and synthesize a clean markdown answer with citations.
+```bash
+python query.py "Which machine has no modifiable services identified by winPEAS?"
+```
 ---
 
 ## 🧪 Test Question Set
