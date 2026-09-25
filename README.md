@@ -38,7 +38,7 @@ pip install -r requirements.txt
 ```
 
 ### Step 2: Configure Environment
-Create a `.env` file in the root directory. Add the API keys (provided to you securely outside of this repository) to connect to the pre-populated database:
+Create a `.env` file in the root directory. Add the API keys to connect to the database:
 ```env
 SUPABASE_URL=your_provided_url
 SUPABASE_KEY=your_provided_key
