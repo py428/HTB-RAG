@@ -82,9 +82,3 @@ The pipeline has been tuned to handle both broad "cheatsheet" style requests and
 15. How are passwords or hashes extracted from the database on Blockblock and Checker?
 
 ---
-
-## 📊 Evaluation & Design Note
-Please read the attached `evaluation_writeup.md` for a comprehensive breakdown of the pipeline's performance. It includes:
-* Precision and Recall scoring for all 15 test questions based on a hand-derived ground truth.
-* Qualitative notes on hallucination prevention and citation accuracy.
-* A brief design note justifying the Markdown chunking strategy and embedding-based retrieval model.
