@@ -1,27 +1,26 @@
 <div align="center">
   <h1>🛡️ HackTheBox Wiki RAG Pipeline</h1>
-  <p><i>An AI-powered Retrieval-Augmented Generation (RAG) system for cybersecurity writeups.</i></p>
+  <p><i>Retrieval-Augmented Generation (RAG) system for cybersecurity writeups.</i></p>
 </div>
 
 ---
 
-## 🚀 Overview
+## Overview
 This repository contains a full RAG pipeline designed to intelligently parse, embed, search, and synthesize answers from HackTheBox (HTB) penetration testing writeups. 
 
-### 🏗️ Architecture
-- **Web App:** Next-gen Claude-style chat UI hosted on Vercel (`index.html` + `api/index.py`).
+### Architecture
 - **Embeddings:** Hugging Face Inference Providers (`sentence-transformers/all-MiniLM-L6-v2`), with a Supabase keyword-search fallback.
 - **Vector Database:** Cloud-hosted Supabase with `pgvector`.
 - **LLM Synthesis:** Groq (`openai/gpt-oss-20b`).
 
 ---
 
-## 🌐 Live Web Demo (For Quick Evaluation)
+## 🌐 Live Web Demo
 If you do not want to run the code locally, you can evaluate the RAG pipeline directly from your browser! 
 
 👉 **[Click Here to open the Vercel App](https://htb-rag.vercel.app/)** 
 
-*Note for HR: The web app connects directly to the cloud Supabase database and Groq. Just paste any of the 15 questions from the test set below into the chat box!*
+*Note: The web app connects directly to the cloud Supabase database and Groq. Just paste any of the 15 questions from the test set below into the chat box!*
 
 ---
 
