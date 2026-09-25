@@ -125,7 +125,6 @@
     </div>
 
     <div class="chat-container" id="chat-container">
-        <!-- Initial AI greeting -->
         <div class="message ai">
             <div class="avatar ai-avatar">AI</div>
             <div class="message-content">
@@ -148,13 +147,10 @@
             const query = input.value.trim();
             if (!query) return;
 
-            // Clear input
             input.value = '';
             
-            // Add User message
             addMessage('User', query, 'user');
             
-            // Show loading
             document.getElementById('loading').style.display = 'block';
 
             try {
@@ -166,13 +162,11 @@
 
                 const data = await response.json();
                 
-                // Parse markdown and add AI message
                 const htmlAnswer = marked.parse(data.answer);
                 addMessage('AI', htmlAnswer, 'ai', true);
             } catch (error) {
                 addMessage('AI', 'Error connecting to the API. Make sure backend is running.', 'ai');
             } finally {
-                // Hide loading
                 document.getElementById('loading').style.display = 'none';
             }
         }
@@ -198,7 +192,6 @@
             messageDiv.appendChild(contentDiv);
             chatContainer.appendChild(messageDiv);
             
-            // Scroll to bottom
             chatContainer.scrollTop = chatContainer.scrollHeight;
         }
 

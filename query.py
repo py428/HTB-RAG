@@ -4,7 +4,6 @@ import argparse
 import warnings
 from dotenv import load_dotenv
 
-# Suppress HuggingFace and deprecation warnings
 warnings.filterwarnings("ignore")
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
 from langchain_huggingface import HuggingFaceEmbeddings
@@ -26,11 +25,9 @@ supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
 llm = ChatGroq(model="openai/gpt-oss-20b", temperature=0.2)
 
-# Set TOP_K default to 10 as requested
 DEFAULT_TOP_K = 10
 
 def get_relevant_chunks(query: str, match_count: int = DEFAULT_TOP_K):
-    """Fetch the most relevant document chunks from Supabase."""
     query_embedding = embeddings.embed_query(query)
     
     response = supabase.rpc(
@@ -44,8 +41,6 @@ def get_relevant_chunks(query: str, match_count: int = DEFAULT_TOP_K):
     return response.data
 
 def synthesize_answer(query: str, chunks: list):
-    """Use the LLM to generate an answer based ONLY on the retrieved chunks."""
-    
     if not chunks:
         return "No relevant information found in the knowledge base."
         
@@ -53,7 +48,6 @@ def synthesize_answer(query: str, chunks: list):
     for chunk in chunks:
         machine_name = chunk.get("metadata", {}).get("machine_name", "Unknown")
         content = chunk.get("content", "")
-        # Include metadata inline so the LLM can see the machine name
         context_parts.append(f"---\n[Machine: {machine_name}]\n{content}\n---")
         
     context_string = "\n\n".join(context_parts)
@@ -93,7 +87,6 @@ def main():
     print("Synthesizing answer...\n")
     answer = synthesize_answer(args.query, chunks)
     
-    # Safely handle Windows console encoding issues for special characters (like non-breaking hyphens)
     safe_answer = answer.encode(sys.stdout.encoding or 'utf-8', errors='replace').decode(sys.stdout.encoding or 'utf-8')
     
     print("="*10)

@@ -16,7 +16,6 @@ supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
 
 def extract_machine_name(filename):
-    """Example: htb-absolute.md -> Absolute"""
     basename = os.path.basename(filename)
     name = basename.replace('htb-', '').replace('.md', '')
     return name.title()
@@ -30,7 +29,6 @@ def clear_database():
         print(f"Error clearing database: {e}")
         print("Trying fallback delete method...")
         try:
-            # Fallback if RPC isn't set up
             supabase.table("documents").delete().neq("id", "00000000-0000-0000-0000-000000000000").execute()
             print("Database cleared using fallback method.")
         except Exception as e_fallback:
@@ -65,10 +63,8 @@ def main():
         if not content.strip():
             continue
         
-        # Split by markdown headers
         md_docs = markdown_splitter.split_text(content)
         
-        # Further split by characters if chunks are too long
         chunks = text_splitter.split_documents(md_docs)
         
         if not chunks:
@@ -76,13 +72,10 @@ def main():
             
         print(f"Processing {machine_name}: {len(chunks)} chunks")
         
-        # Batch embed all chunks for this machine locally
         texts = [chunk.page_content for chunk in chunks]
         
-        # Local embeddings - no rate limits!
         doc_embeddings = embeddings.embed_documents(texts)
             
-        # Prepare for Supabase
         records = []
         for i, chunk in enumerate(chunks):
             metadata = chunk.metadata
@@ -94,12 +87,10 @@ def main():
                 "embedding": doc_embeddings[i]
             })
             
-            # Batch insert to avoid huge requests (batch size 64)
             if len(records) >= 64:
                 supabase.table("documents").insert(records).execute()
                 records = []
                 
-        # Insert remaining
         if records:
             supabase.table("documents").insert(records).execute()
 

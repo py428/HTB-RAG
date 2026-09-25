@@ -1,16 +1,16 @@
 import os
+import json
+import urllib.request
 from dotenv import load_dotenv
 load_dotenv()
 from fastapi import FastAPI
 from pydantic import BaseModel
 from supabase import create_client, Client
 from langchain_groq import ChatGroq
-from langchain_community.embeddings import HuggingFaceInferenceAPIEmbeddings
 from fastapi.responses import FileResponse
 
 app = FastAPI()
 
-# Serve the HTML frontend locally
 @app.get("/")
 def read_root():
     return FileResponse("index.html")
@@ -18,26 +18,31 @@ def read_root():
 class QueryRequest(BaseModel):
     query: str
 
+def get_hf_embedding(text: str, hf_token: str):
+    url = "https://api-inference.huggingface.co/pipeline/feature-extraction/sentence-transformers/all-MiniLM-L6-v2"
+    headers = {
+        "Authorization": f"Bearer {hf_token}",
+        "Content-Type": "application/json"
+    }
+    data = json.dumps({"inputs": text}).encode("utf-8")
+    req = urllib.request.Request(url, data=data, headers=headers)
+    with urllib.request.urlopen(req, timeout=10) as response:
+        result = json.loads(response.read().decode())
+        return result[0] if isinstance(result[0], list) else result
+
 @app.post("/api/chat")
 def chat(request: QueryRequest):
     query = request.query
     
-    # 1. We must use the HF API Embeddings on Vercel to bypass the 250MB limit
     hf_token = os.environ.get("HF_TOKEN")
     if not hf_token:
         return {"answer": "Error: HF_TOKEN environment variable is missing. Please add it to your Vercel project."}
         
-    embeddings = HuggingFaceInferenceAPIEmbeddings(
-        api_key=hf_token,
-        model_name="sentence-transformers/all-MiniLM-L6-v2"
-    )
-    
     try:
-        query_embedding = embeddings.embed_query(query)
+        query_embedding = get_hf_embedding(query, hf_token)
     except Exception as e:
-        return {"answer": f"Failed to generate embeddings: {str(e)}"}
+        return {"answer": f"Failed to generate embeddings via direct API: {str(e)}"}
         
-    # 2. Search Supabase
     url = os.environ.get("SUPABASE_URL")
     key = os.environ.get("SUPABASE_KEY")
     supabase: Client = create_client(url, key)
@@ -53,7 +58,6 @@ def chat(request: QueryRequest):
     if not chunks:
         return {"answer": "No relevant context found in the database for this question."}
         
-    # 3. Synthesize via Groq
     llm = ChatGroq(model="openai/gpt-oss-20b", temperature=0.2)
     prompt = f"""You are a helpful cybersecurity AI assistant parsing HackTheBox writeups. 
     Answer the user's question based ONLY on the provided context.

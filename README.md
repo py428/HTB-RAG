@@ -19,7 +19,7 @@ This repository contains a full RAG pipeline designed to intelligently parse, em
 ## 🌐 Live Web Demo (For Quick Evaluation)
 If you do not want to run the code locally, you can evaluate the RAG pipeline directly from your browser! 
 
-👉 **[Click Here to open the Vercel App](https://your-app-name.vercel.app)** 
+👉 **[Click Here to open the Vercel App](https://htb-rag.vercel.app/)** 
 
 *Note for HR: The web app connects directly to the cloud Supabase database and Groq. Just paste any of the 15 questions from the test set below into the chat box!*
 
@@ -32,7 +32,7 @@ To make evaluation as frictionless as possible, the Supabase database is **alrea
 ### Step 1: Clone & Setup
 Clone the repository and install the dependencies:
 ```bash
-git clone https://github.com/your-username/htb-wiki.git
+git clone https://github.com/py428/HTB-RAG.git
 cd htb-wiki
 python -m venv venv
 venv\Scripts\activate      # On Windows
