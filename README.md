@@ -10,7 +10,7 @@ This repository contains a full RAG pipeline designed to intelligently parse, em
 
 ### 🏗️ Architecture
 - **Web App:** Next-gen Claude-style chat UI hosted on Vercel (`index.html` + `api/index.py`).
-- **Embeddings:** HuggingFace Inference API (`sentence-transformers/all-MiniLM-L6-v2`) via LangChain.
+- **Embeddings:** Hugging Face Inference Providers (`sentence-transformers/all-MiniLM-L6-v2`), with a Supabase keyword-search fallback.
 - **Vector Database:** Cloud-hosted Supabase with `pgvector`.
 - **LLM Synthesis:** Groq (`openai/gpt-oss-20b`).
 
@@ -46,7 +46,13 @@ Create a `.env` file in the root directory. Add the API keys (provided to you se
 SUPABASE_URL=your_provided_url
 SUPABASE_KEY=your_provided_key
 GROQ_API_KEY=your_provided_key
+HF_TOKEN=your_hugging_face_token_with_inference_permission
 ```
+
+The deployed API uses Hugging Face's current Inference Providers router for
+`sentence-transformers/all-MiniLM-L6-v2`. If that embedding service is
+temporarily unavailable, the API falls back to keyword retrieval from the same
+Supabase document collection instead of returning a provider error to the user.
 
 ### Step 3: Run a Query
 You can now ask the RAG pipeline a question. It will reach out to the cloud database, retrieve the top 10 most relevant context chunks, and synthesize a clean markdown answer with citations.
