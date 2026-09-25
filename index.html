@@ -49,19 +49,87 @@
             background-color: #444654;
         }
         .avatar {
-            width: 30px;
-            height: 30px;
-            border-radius: 4px;
+            width: 36px;
+            height: 36px;
+            flex: 0 0 36px;
+            border-radius: 11px;
             display: flex;
             justify-content: center;
             align-items: center;
-            font-weight: bold;
+            position: relative;
+            overflow: hidden;
+            color: #ffffff;
+            font-family: Inter, 'Segoe UI', sans-serif;
+            isolation: isolate;
+        }
+        .avatar::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at 28% 18%, rgba(255, 255, 255, 0.42), transparent 42%);
+            z-index: -1;
+        }
+        .avatar::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border: 1px solid rgba(255, 255, 255, 0.22);
+            border-radius: inherit;
+            box-sizing: border-box;
+            pointer-events: none;
+        }
+        .avatar-mark {
+            position: relative;
+            z-index: 1;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1;
         }
         .avatar.user-avatar {
-            background-color: #5436DA;
+            background: linear-gradient(145deg, #8b5cf6 0%, #5b5ce2 52%, #3b43c6 100%);
+            box-shadow: 0 8px 18px rgba(82, 71, 214, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        }
+        .user-avatar .avatar-mark {
+            width: 21px;
+            height: 21px;
+            border: 1px solid rgba(255, 255, 255, 0.48);
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.08);
+            font-size: 12px;
+            font-weight: 800;
+            text-shadow: 0 1px 4px rgba(25, 18, 94, 0.35);
         }
         .avatar.ai-avatar {
-            background-color: #10a37f;
+            background: linear-gradient(145deg, #18d7a0 0%, #0da984 52%, #087c72 100%);
+            box-shadow: 0 8px 18px rgba(13, 169, 132, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.24);
+        }
+        .ai-avatar .avatar-mark {
+            font-size: 12px;
+            font-weight: 850;
+            letter-spacing: -0.65px;
+            text-shadow: 0 1px 5px rgba(0, 66, 55, 0.38);
+        }
+        .ai-avatar .avatar-mark::before {
+            content: '';
+            position: absolute;
+            width: 25px;
+            height: 15px;
+            border: 1px solid rgba(218, 255, 246, 0.42);
+            border-radius: 50%;
+            transform: rotate(-32deg);
+            z-index: -1;
+        }
+        .avatar-spark {
+            position: absolute;
+            top: -7px;
+            right: -8px;
+            width: 4px;
+            height: 4px;
+            border-radius: 1px;
+            background: #ffffff;
+            box-shadow: 0 0 7px rgba(255, 255, 255, 0.95);
+            transform: rotate(45deg);
         }
         .message-content {
             flex-grow: 1;
@@ -126,7 +194,9 @@
 
     <div class="chat-container" id="chat-container">
         <div class="message ai">
-            <div class="avatar ai-avatar">AI</div>
+            <div class="avatar ai-avatar" aria-hidden="true">
+                <span class="avatar-mark">AI<span class="avatar-spark"></span></span>
+            </div>
             <div class="message-content">
                 Hello! I am connected to the HTB RAG pipeline. How can I help you today? Try asking me one of your 15 test questions.
             </div>
@@ -178,7 +248,10 @@
             
             const avatarDiv = document.createElement('div');
             avatarDiv.className = `avatar ${type}-avatar`;
-            avatarDiv.innerText = sender === 'User' ? 'U' : 'AI';
+            avatarDiv.setAttribute('aria-hidden', 'true');
+            avatarDiv.innerHTML = sender === 'User'
+                ? '<span class="avatar-mark">U</span>'
+                : '<span class="avatar-mark">AI<span class="avatar-spark"></span></span>';
 
             const contentDiv = document.createElement('div');
             contentDiv.className = 'message-content';
