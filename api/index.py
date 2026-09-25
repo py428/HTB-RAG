@@ -7,6 +7,7 @@ import requests
 from dotenv import load_dotenv
 from fastapi import FastAPI
 from fastapi.responses import FileResponse
+from langchain_core.messages import HumanMessage, SystemMessage
 from langchain_groq import ChatGroq
 from pydantic import BaseModel
 from supabase import Client, create_client
@@ -23,6 +24,20 @@ HF_INFERENCE_URL = (
 )
 EMBEDDING_DIMENSIONS = 384
 DEFAULT_TOP_K = 10
+
+ANSWER_SYSTEM_PROMPT = """You are a helpful cybersecurity AI assistant parsing
+HackTheBox writeups. Answer only from the supplied context. If the context does
+not contain the answer, say "I don't have enough information".
+
+Follow these response rules strictly:
+1. Never output a Markdown table or use pipes to create tabular rows.
+2. Use short headings followed by concise paragraphs or bullet points.
+3. Put commands and code snippets in fenced code blocks on their own lines.
+4. Cite facts as '(seen on: <machine name>)', for example '(seen on: Control)'.
+   Use only the machine name from the context tag; do not include the word
+   'Machine' inside the citation.
+5. Keep the answer focused and do not repeat the conclusion.
+"""
 
 STOP_WORDS = {
     "about",
@@ -196,26 +211,19 @@ def chat(request: QueryRequest):
         model="openai/gpt-oss-20b",
         temperature=0.2,
     )
-    prompt = f"""You are a helpful cybersecurity AI assistant parsing HackTheBox writeups.
-Answer the user's question based ONLY on the provided context.
-If the context doesn't contain the answer, say "I don't have enough information".
-For each fact you use, append '(seen on: [Machine])' to the end of the sentence or bullet point.
-Format the answer for comfortable reading on both phones and desktops:
-- Prefer short headings, concise paragraphs, and bullet points.
-- Do NOT use Markdown tables.
-- Put commands or code snippets in fenced code blocks on their own lines.
-- Keep the answer focused and avoid repeating the same conclusion.
-
-Context:
+    user_prompt = f"""Context:
 {context}
 
 Question: {query}
-
-Answer clearly in Markdown format. Do NOT hallucinate.
 """
 
     try:
-        message = llm.invoke(prompt)
+        message = llm.invoke(
+            [
+                SystemMessage(content=ANSWER_SYSTEM_PROMPT),
+                HumanMessage(content=user_prompt),
+            ]
+        )
         return {"answer": message.content}
     except Exception:
         logger.exception("Groq answer generation failed")
