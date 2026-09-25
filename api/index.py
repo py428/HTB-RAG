@@ -200,6 +200,11 @@ def chat(request: QueryRequest):
 Answer the user's question based ONLY on the provided context.
 If the context doesn't contain the answer, say "I don't have enough information".
 For each fact you use, append '(seen on: [Machine])' to the end of the sentence or bullet point.
+Format the answer for comfortable reading on both phones and desktops:
+- Prefer short headings, concise paragraphs, and bullet points.
+- Do NOT use Markdown tables.
+- Put commands or code snippets in fenced code blocks on their own lines.
+- Keep the answer focused and avoid repeating the same conclusion.
 
 Context:
 {context}

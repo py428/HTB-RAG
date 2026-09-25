@@ -6,6 +6,13 @@
     <title>HTB Wiki AI</title>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <style>
+        * {
+            box-sizing: border-box;
+        }
+        html {
+            height: 100%;
+            overflow-x: hidden;
+        }
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: #343541;
@@ -14,6 +21,7 @@
             display: flex;
             flex-direction: column;
             height: 100vh;
+            overflow-x: hidden;
         }
         .header {
             text-align: center;
@@ -28,6 +36,7 @@
         .chat-container {
             flex-grow: 1;
             overflow-y: auto;
+            overflow-x: hidden;
             padding: 20px;
             display: flex;
             flex-direction: column;
@@ -41,6 +50,7 @@
             gap: 15px;
             padding: 20px;
             border-radius: 8px;
+            min-width: 0;
         }
         .message.user {
             background-color: #343541;
@@ -133,7 +143,103 @@
         }
         .message-content {
             flex-grow: 1;
+            min-width: 0;
             line-height: 1.6;
+            font-size: 15px;
+            overflow-wrap: anywhere;
+        }
+        .message-content > :first-child {
+            margin-top: 0;
+        }
+        .message-content > :last-child {
+            margin-bottom: 0;
+        }
+        .message-content p {
+            margin: 0 0 12px;
+        }
+        .message-content h1,
+        .message-content h2,
+        .message-content h3,
+        .message-content h4 {
+            margin: 20px 0 10px;
+            color: #f7f7f8;
+            line-height: 1.3;
+        }
+        .message-content h1 {
+            font-size: 20px;
+        }
+        .message-content h2 {
+            font-size: 18px;
+        }
+        .message-content h3,
+        .message-content h4 {
+            font-size: 16px;
+        }
+        .message-content ul,
+        .message-content ol {
+            margin: 10px 0 14px;
+            padding-left: 24px;
+        }
+        .message-content li {
+            padding-left: 3px;
+        }
+        .message-content li + li {
+            margin-top: 8px;
+        }
+        .message-content strong {
+            color: #ffffff;
+        }
+        .message-content a {
+            color: #5ee0bd;
+            text-underline-offset: 3px;
+        }
+        .message-content blockquote {
+            margin: 14px 0;
+            padding: 10px 14px;
+            border-left: 3px solid #19c79a;
+            border-radius: 0 6px 6px 0;
+            background: rgba(16, 163, 127, 0.08);
+            color: #d9d9e3;
+        }
+        .table-scroll {
+            width: 100%;
+            max-width: 100%;
+            margin: 14px 0;
+            overflow-x: auto;
+            border: 1px solid #5d6070;
+            border-radius: 9px;
+            scrollbar-width: thin;
+            scrollbar-color: #77798a #393b48;
+        }
+        .message-content table {
+            width: 100%;
+            min-width: 620px;
+            border-collapse: collapse;
+            background: rgba(32, 33, 43, 0.35);
+            font-size: 14px;
+        }
+        .message-content th,
+        .message-content td {
+            padding: 11px 12px;
+            border-right: 1px solid #565968;
+            border-bottom: 1px solid #565968;
+            text-align: left;
+            vertical-align: top;
+            overflow-wrap: anywhere;
+        }
+        .message-content th {
+            background: #383a47;
+            color: #72e4c4;
+            font-size: 12px;
+            letter-spacing: 0.03em;
+            text-transform: uppercase;
+        }
+        .message-content tr:last-child td {
+            border-bottom: none;
+        }
+        .message-content th:last-child,
+        .message-content td:last-child {
+            border-right: none;
         }
         .input-container {
             padding: 20px;
@@ -176,12 +282,107 @@
         }
         pre {
             background-color: #1e1e2f;
-            padding: 10px;
-            border-radius: 5px;
+            margin: 12px 0;
+            padding: 14px;
+            border: 1px solid #4f5261;
+            border-radius: 8px;
             overflow-x: auto;
+            white-space: pre;
         }
         code {
-            font-family: monospace;
+            font-family: 'Cascadia Code', 'SFMono-Regular', Consolas, monospace;
+            font-size: 0.9em;
+        }
+        :not(pre) > code {
+            padding: 2px 5px;
+            border-radius: 4px;
+            background: rgba(20, 21, 28, 0.55);
+            color: #9af0d8;
+            white-space: normal;
+            overflow-wrap: anywhere;
+        }
+        @media (max-width: 640px) {
+            .header {
+                padding: 14px 12px;
+            }
+            .header h1 {
+                font-size: 20px;
+            }
+            .chat-container {
+                padding: 12px;
+                gap: 12px;
+            }
+            .message {
+                gap: 11px;
+                padding: 14px 12px;
+                border-radius: 9px;
+            }
+            .avatar {
+                width: 32px;
+                height: 32px;
+                flex-basis: 32px;
+                border-radius: 10px;
+            }
+            .message-content {
+                font-size: 14px;
+                line-height: 1.55;
+            }
+            .input-container {
+                padding: 12px;
+            }
+            .table-scroll {
+                overflow: visible;
+                border: none;
+                border-radius: 0;
+                background: transparent;
+            }
+            .message-content table,
+            .message-content tbody,
+            .message-content tr,
+            .message-content td {
+                display: block;
+                width: 100%;
+                min-width: 0;
+            }
+            .message-content thead {
+                position: absolute;
+                width: 1px;
+                height: 1px;
+                padding: 0;
+                margin: -1px;
+                overflow: hidden;
+                clip: rect(0, 0, 0, 0);
+                white-space: nowrap;
+                border: 0;
+            }
+            .message-content tbody tr {
+                padding: 6px 10px;
+                border: 1px solid #5b5e6d;
+                border-radius: 9px;
+                background: rgba(32, 33, 43, 0.42);
+            }
+            .message-content tbody tr + tr {
+                margin-top: 10px;
+            }
+            .message-content td {
+                display: grid;
+                grid-template-columns: minmax(88px, 35%) minmax(0, 1fr);
+                gap: 10px;
+                padding: 9px 0;
+                border-right: 0;
+                border-bottom: 1px solid #535664;
+            }
+            .message-content td::before {
+                content: attr(data-label);
+                color: #72e4c4;
+                font-size: 11px;
+                font-weight: 700;
+                letter-spacing: 0.025em;
+                text-transform: uppercase;
+            }
+            .message-content td:last-child {
+                border-bottom: 0;
+            }
         }
     </style>
 </head>
@@ -257,6 +458,7 @@
             contentDiv.className = 'message-content';
             if (isHtml) {
                 contentDiv.innerHTML = text;
+                enhanceRenderedContent(contentDiv);
             } else {
                 contentDiv.innerText = text;
             }
@@ -266,6 +468,24 @@
             chatContainer.appendChild(messageDiv);
             
             chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        function enhanceRenderedContent(content) {
+            content.querySelectorAll('table').forEach(table => {
+                const labels = Array.from(table.querySelectorAll('thead th'))
+                    .map(header => header.textContent.trim());
+
+                table.querySelectorAll('tbody tr').forEach(row => {
+                    Array.from(row.children).forEach((cell, index) => {
+                        cell.dataset.label = labels[index] || `Column ${index + 1}`;
+                    });
+                });
+
+                const wrapper = document.createElement('div');
+                wrapper.className = 'table-scroll';
+                table.parentNode.insertBefore(wrapper, table);
+                wrapper.appendChild(table);
+            });
         }
 
         function handleKeyPress(e) {
