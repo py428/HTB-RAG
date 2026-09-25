@@ -1,0 +1,9 @@
+fastapi
+uvicorn
+pydantic
+supabase==2.4.1
+langchain==0.1.13
+langchain-community==0.0.29
+langchain-groq
+python-dotenv==1.0.1
+tiktoken==0.6.0
